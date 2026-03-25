@@ -1,0 +1,17 @@
+{
+    "name": "Case Vacanze",
+    "short_name": "Case Vacanze",
+    "description": "Gestione prenotazioni case vacanze",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#eff6ff",
+    "theme_color": "#2563eb",
+    "icons": [
+      {
+        "src": "/icon.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any maskable"
+      }
+    ]
+  }
