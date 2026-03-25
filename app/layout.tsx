@@ -15,6 +15,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Case Vacanze",
   description: "Gestione prenotazioni case vacanze",
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -24,9 +28,15 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="it" translate="no"
+      lang="it"
+      translate="no"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <link rel="icon" href="/icon.png" />
+        <link rel="apple-touch-icon" href="/icon.png" />
+        <meta name="theme-color" content="#2563eb" />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

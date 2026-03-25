@@ -52,6 +52,11 @@ export default function Calendar({
   const [giorniSelezionati, setGiorniSelezionati] = useState<string[]>([])
   const [messaggio, setMessaggio] = useState('')
   const [loading, setLoading] = useState(true)
+  const [popupGiorno, setPopupGiorno] = useState<{
+    data: string
+    membro: string
+    famiglia: string
+  } | null>(null)
 
   useEffect(() => {
     caricaUtente()
@@ -177,11 +182,23 @@ export default function Calendar({
     }
     return { occupato: false, famiglia: null, membro: null }
   }
-
+  
   const toggleGiorno = (giorno: Date) => {
     const giornoStr = format(giorno, 'yyyy-MM-dd')
     const stato = getStatoGiorno(giorno)
+  
+    // Admin clicca su giorno occupato → mostra popup
+    if (stato.occupato && isAdmin) {
+      setPopupGiorno({
+        data: giornoStr,
+        membro: stato.membro || '',
+        famiglia: stato.famiglia || ''
+      })
+      return
+    }
+  
     if (stato.occupato) return
+  
     setGiorniSelezionati(prev =>
       prev.includes(giornoStr)
         ? prev.filter(g => g !== giornoStr)
@@ -194,6 +211,7 @@ export default function Calendar({
     setMessaggio('')
 
     const nomeFamiglia = utente.famiglie?.nome
+    const isAdmin = utente.ruolo === 'admin'
     const maxGiorni = getMaxGiorni(nomeFamiglia)
     const giorniUsati = giorniUsatiPerFamiglia(utente.famiglia_id)
 
@@ -298,6 +316,50 @@ export default function Calendar({
 
   return (
     <div className="min-h-screen bg-gray-50">
+  {/* POPUP ADMIN */}
+{popupGiorno && (
+  <div
+    className="fixed inset-0 bg-black bg-opacity-50 
+      flex items-center justify-center z-50 p-4"
+    onClick={() => setPopupGiorno(null)}
+  >
+    <div
+      className="bg-white rounded-2xl shadow-xl p-6 
+        w-full max-w-xs"
+      onClick={e => e.stopPropagation()}
+    >
+      <div className="text-center mb-4">
+        <div className="text-3xl mb-2">📅</div>
+        <h3 className="font-extrabold text-gray-900 text-lg">
+          Giorno prenotato
+        </h3>
+      </div>
+      <div className="bg-gray-50 rounded-xl p-4 mb-4">
+        <p className="text-sm text-gray-500 mb-1">Data</p>
+        <p className="font-bold text-gray-900">
+          {format(parseISO(popupGiorno.data), 
+            'd MMMM yyyy', { locale: it })}
+        </p>
+      </div>
+      <div className="bg-blue-50 rounded-xl p-4 mb-4">
+        <p className="text-sm text-gray-500 mb-1">Prenotato da</p>
+        <p className="font-bold text-blue-700 text-lg">
+          {popupGiorno.membro}
+        </p>
+        <p className="text-sm text-gray-500">
+          Famiglia {popupGiorno.famiglia}
+        </p>
+      </div>
+      <button
+        onClick={() => setPopupGiorno(null)}
+        className="w-full bg-gray-900 text-white rounded-xl 
+          py-3 font-bold hover:bg-gray-700 transition-colors"
+      >
+        Chiudi
+      </button>
+    </div>
+  </div>
+)}
       <div className="max-w-lg mx-auto p-4">
 
         {/* HEADER */}
