@@ -49,7 +49,6 @@ export default function Home() {
   }
 
   const esci = () => {
-    localStorage.removeItem('casevacanze_utente')
     setUser(null)
     setNomeInput('')
     setErrore('')
